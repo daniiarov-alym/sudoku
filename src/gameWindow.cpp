@@ -319,11 +319,13 @@ void GameWindow::GameLoop()
                     wrefresh(log);
                     curs_set(0);
                     int ch = getch();
-                    if (ch == 27)
+                    if (!(ch == 27))
                     {
+                        board.Reset();
+                    }
+                    else {
                         break;
                     }
-                    board.Reset();
                 }
             }
         }
