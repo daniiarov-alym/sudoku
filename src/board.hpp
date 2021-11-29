@@ -32,6 +32,8 @@ public:
         return userBoard;
     }
     
+    bool AutoSolve();
+    
     void Reset();
     bool AllFilled();
     bool CheckSolution();

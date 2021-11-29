@@ -26,6 +26,7 @@ void GameWindow::DrawGrid()
 void GameWindow::Render()
 {
     std::vector<std::vector<int>> deck = board.GetUserBoard();
+    std::vector<std::vector<int>> underDeck = board.GetBoard();
     for (int i = 0; i < Board::SIZE; i++)
     {
         for (int j = 0; j < Board::SIZE; j++)
@@ -35,7 +36,12 @@ void GameWindow::Render()
                 mvwaddch(grid, 2 * i + 1, 2 + 4 * j, ' ');
                 continue;
             }
+           
             mvwaddch(grid, 2 * i + 1, 2 + 4 * j, '0' + deck.at(i).at(j));
+            if (underDeck.at(i).at(j) > 0)
+            {
+                mvwchgat(grid, 2 * i + 1, 2 + 4 * j, 1, A_COLOR, COLOR_PAIR(1), NULL);
+            }
         }
     }
     Refresh();
@@ -202,7 +208,13 @@ bool GameWindow::Controle(int key)
     }
     else if (key == 'S' || key == 's')
     {
-        board.Solve(0,0);
+        board.AutoSolve();
+        Render();
+    }
+    else if (key == 'C' || key == 'c')
+    {
+        board.Reset();
+        Render();
     }
     return true;
 }
@@ -239,6 +251,7 @@ GameWindow::GameWindow() : cursorY(0), cursorX(0), editMode(false)
 {
     grid = newwin(GRID_LINES, GRID_COLUMNS, GRID_Y, GRID_Y);
     info = newwin(INFO_LINES, INFO_COLUMNS, INFO_Y, INFO_X);
+    
     keypad(grid, true);
     keypad(info, true);
     DrawGrid();

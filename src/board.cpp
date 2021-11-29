@@ -11,10 +11,19 @@ void Board::Set(int y, int x, int val, bool editMode)
 {
     if (val < 0 || val > SIZE)
         return;
-    if (editMode)
-        board.at(y).at(x) = val;
-
+    if (!Valid(y,x,val))
+    {
+        return;
+    }    
+    if (!editMode && board.at(y).at(x) != 0)
+    {
+        return;
+    }
     userBoard.at(y).at(x) = val;
+    if (editMode)
+    {
+        board = userBoard;
+    }
 }
 
 bool Board::CheckRows()
@@ -86,6 +95,20 @@ bool Board::CheckSquares()
 bool Board::CheckSolution()
 {
     return CheckColumns() && CheckRows() && CheckSquares();
+}
+
+bool Board::AutoSolve()
+{
+    std::vector<std::vector<int>> tmp = board;
+    if (Solve(0,0))
+    {
+        userBoard = board;
+        return true;
+    }
+    else {
+        board = tmp;
+        return false;
+    }
 }
 
 /*
@@ -219,7 +242,6 @@ bool Board::Solve(int y, int x)
             x = 0;
         }
     }
-
     if (board.at(y).at(x) > 0)
     {
         return Solve(y, x + 1);
@@ -227,6 +249,7 @@ bool Board::Solve(int y, int x)
     std::vector<int> candidates = FindCandidates(y, x);
     for (int i = 0; i < candidates.size(); ++i)
     {
+        
         board.at(y).at(x) = candidates.at(i);
         if (Solve(y, x + 1))
         {
