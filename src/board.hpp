@@ -32,6 +32,8 @@ public:
         return userBoard;
     }
     
+    bool Solvable();
+    
     bool AutoSolve();
     
     void Reset();

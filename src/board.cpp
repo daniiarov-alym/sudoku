@@ -97,6 +97,14 @@ bool Board::CheckSolution()
     return CheckColumns() && CheckRows() && CheckSquares();
 }
 
+bool Board::Solvable()
+{
+    std::vector<std::vector<int>> tmp = board;
+    int res = Solve(0,0);
+    board = tmp;
+    return res;
+}
+
 bool Board::AutoSolve()
 {
     std::vector<std::vector<int>> tmp = board;

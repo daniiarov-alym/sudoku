@@ -9,15 +9,30 @@ void GameWindow::DrawGrid()
         {
             if (i % 2 == 0 && j % 4 == 0)
             {
+
+                if (i % 6 == 0 && j % 4 == 0 || j % 12 == 0 && i % 2 == 0)
+                    wattron(grid, COLOR_PAIR(2));
                 mvwaddch(grid, i, j, '+');
+                if (i % 6 == 0 && j % 4 == 0 || j % 12 == 0 && i % 2 == 0)
+                    wattroff(grid, COLOR_PAIR(2));
             }
             else if (j % 4 == 0)
             {
+                if (j % 12 == 0)
+                    wattron(grid, COLOR_PAIR(2));
                 mvwaddch(grid, i, j, '|');
+
+                if (j % 12 == 0)
+                    wattroff(grid, COLOR_PAIR(2));
             }
             else if (i % 2 == 0)
             {
+                if (i % 6 == 0)
+                    wattron(grid, COLOR_PAIR(2));
                 mvwaddch(grid, i, j, '-');
+
+                if (i % 6 == 0)
+                    wattroff(grid, COLOR_PAIR(2));
             }
         }
     }
@@ -36,17 +51,34 @@ void GameWindow::Render()
                 mvwaddch(grid, 2 * i + 1, 2 + 4 * j, ' ');
                 continue;
             }
-           
+            if (underDeck.at(i).at(j) > 0)
+            {
+                wattron(grid, COLOR_PAIR(1));
+            }
             mvwaddch(grid, 2 * i + 1, 2 + 4 * j, '0' + deck.at(i).at(j));
             if (underDeck.at(i).at(j) > 0)
             {
-                mvwchgat(grid, 2 * i + 1, 2 + 4 * j, 1, A_COLOR, COLOR_PAIR(1), NULL);
+                wattroff(grid, COLOR_PAIR(1));
             }
         }
     }
     Refresh();
     wmove(grid, 2 * cursorY + 1, 2 + 4 * cursorX);
     wrefresh(grid);
+}
+
+void GameWindow::PrintInfo()
+{
+    wprintw(info, "\tSudoku v0.1.0\n");
+    wprintw(info, "ESC to leave\n");
+    wprintw(info, "Arrows or mouse to move the cursor\n");
+    wprintw(info, "E - generate easy problem\n");
+    wprintw(info, "M - generate middle problem\n");
+    wprintw(info, "H - generate hard problem\n");
+    wprintw(info, "S - auto solve problem\n");
+    wprintw(info, "I - ented editor mode\n");
+    wprintw(info, "F - leave editor mode\n");
+    wprintw(info, "Del, BackSpace, Space, 0 - delete number under cursor\n");
 }
 
 void GameWindow::Normalize(int &x, int &y, int mod)
@@ -149,9 +181,9 @@ void GameWindow::Tab()
 
 void GameWindow::FindCoordinate()
 {
-    int tmpY = event.y-GRID_Y;
-    int tmpX = event.x-GRID_X;
-    if (tmpY < 0 || tmpY > GRID_LINES-1 || tmpX < 0 || tmpX > GRID_COLUMNS-1)
+    int tmpY = event.y - GRID_Y;
+    int tmpX = event.x - GRID_X;
+    if (tmpY < 0 || tmpY > GRID_LINES - 1 || tmpX < 0 || tmpX > GRID_COLUMNS - 1)
     {
         curs_set(0);
         return;
@@ -162,8 +194,12 @@ void GameWindow::FindCoordinate()
         tmpY--;
     if (tmpX == Board::SIZE)
         tmpX--;
+    if(!editMode && board.GetBoard().at(tmpY).at(tmpX) > 0)
+    {
+        return;
+    }    
     cursorY = tmpY;
-    cursorX = tmpX;        
+    cursorX = tmpX;
 }
 
 bool GameWindow::Controle(int key)
@@ -198,10 +234,18 @@ bool GameWindow::Controle(int key)
     else if (key == 'i' || key == 'I')
     {
         editMode = true;
+        Render();
     }
     else if (key == 'f' || key == 'F')
     {
         editMode = false;
+        if (!board.Solvable())
+        {
+            wprintw(log, "This problem does not have solution\n");
+            wrefresh(log);
+            curs_set(0);
+        }
+        Render();
     }
     else if (key == KEY_LEFT)
     {
@@ -231,9 +275,8 @@ bool GameWindow::Controle(int key)
     else if (isdigit(key) && key > '0')
     {
         board.Set(cursorY, cursorX, key - '0', editMode);
-        
     }
-    else if (key == '0' || key == KEY_BACKSPACE || key == KEY_DC)
+    else if (key == '0' || key == KEY_BACKSPACE || key == KEY_DC || key == ' ')
     {
         board.Set(cursorY, cursorX, 0, editMode);
     }
@@ -259,7 +302,7 @@ void GameWindow::GameLoop()
         {
             break;
         }
-        
+
         Render();
         if (!editMode)
         {
@@ -268,10 +311,14 @@ void GameWindow::GameLoop()
                 Render();
                 if (board.CheckSolution())
                 {
-                    wprintw(info, "Won!\n");
-                    wrefresh(info);
+                    wprintw(log, "You won the game, congratulations! Press any key to continue\n");
+                    wrefresh(log);
                     curs_set(0);
-                    getch();
+                    int ch = getch();
+                    if (ch == 27)
+                    {
+                        break;
+                    }
                     board.Reset();
                 }
             }
@@ -284,8 +331,9 @@ GameWindow::GameWindow() : cursorY(0), cursorX(0), editMode(false)
 {
     grid = newwin(GRID_LINES, GRID_COLUMNS, GRID_Y, GRID_Y);
     info = newwin(INFO_LINES, INFO_COLUMNS, INFO_Y, INFO_X);
-    
+    log = newwin(LOG_LINES, LOG_COLUMNS, LOG_Y, LOG_X);
     keypad(grid, true);
     keypad(info, true);
     DrawGrid();
+    PrintInfo();
 }
