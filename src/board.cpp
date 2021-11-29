@@ -11,7 +11,7 @@ void Board::Set(int y, int x, int val, bool editMode)
 {
     if (val < 0 || val > SIZE)
         return;
-    if (!Valid(y,x,val))
+    if (!Valid(y,x,val) && val != 0)
     {
         return;
     }    
@@ -33,13 +33,13 @@ bool Board::CheckRows()
         bool visited[9] = {false, false, false, false, false, false, false, false, false};
         for (int j = 0; j < 9; j++)
         {
-            if (visited[board[i][j] - 1])
+            if (visited[userBoard[i][j] - 1])
             {
                 return false;
             }
             else
             {
-                visited[board[i][j] - 1] = true;
+                visited[userBoard[i][j] - 1] = true;
             }
         }
     }
@@ -53,13 +53,13 @@ bool Board::CheckColumns()
         bool visited[9] = {false, false, false, false, false, false, false, false, false};
         for (int i = 0; i < 9; i++)
         {
-            if (visited[board[i][j] - 1])
+            if (visited[userBoard[i][j] - 1])
             {
                 return false;
             }
             else
             {
-                visited[board[i][j] - 1] = true;
+                visited[userBoard[i][j] - 1] = true;
             }
         }
     }
@@ -77,13 +77,13 @@ bool Board::CheckSquares()
             {
                 for (int l = j * 3; l < (j + 1) * 3; l++)
                 {
-                    if (visited[board[k][l] - 1])
+                    if (visited[userBoard[k][l] - 1])
                     {
                         return false;
                     }
                     else
                     {
-                        visited[board[k][l] - 1] = true;
+                        visited[userBoard[k][l] - 1] = true;
                     }
                 }
             }
@@ -169,9 +169,17 @@ std::vector<int> Board::FindCandidates(int y, int x)
 
 bool Board::AllFilled()
 {
-    int x, y;
-    FindMinimal(x, y);
-    return x == -1 && y == -1;
+    for (int i = 0; i < SIZE; i++)
+    {
+        for (int j = 0; j < SIZE; j++)
+        {
+            if (!userBoard.at(i).at(j))
+            {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 //if x, y both equal to -1 then it means that all is filled
@@ -199,7 +207,7 @@ bool Board::Valid(int y, int x, int val)
     //column
     for (int i = 0; i < 9; i++)
     {
-        if (board.at(i).at(x) == val)
+        if (userBoard.at(i).at(x) == val)
         {
             return false;
         }
@@ -207,7 +215,7 @@ bool Board::Valid(int y, int x, int val)
     //row
     for (int i = 0; i < 9; i++)
     {
-        if (board.at(y).at(i) == val)
+        if (userBoard.at(y).at(i) == val)
         {
             return false;
         }

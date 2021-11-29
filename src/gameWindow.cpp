@@ -77,7 +77,7 @@ void GameWindow::Normalize(int &x, int &y, int mod)
 
 void GameWindow::Move(int dy, int dx)
 {
-    std::vector<std::vector<int>> deck = board.GetUserBoard();
+    std::vector<std::vector<int>> deck = board.GetBoard();
     int ny = cursorY + dy;
     int nx = cursorX + dx;
     Normalize(nx, ny);
@@ -198,9 +198,10 @@ bool GameWindow::Controle(int key)
         Tab();
         curs_set(1);
     }
-    else if (isdigit(key))
+    else if (isdigit(key) && key > '0')
     {
         board.Set(cursorY, cursorX, key - '0', editMode);
+        
     }
     else if (key == '0' || key == KEY_BACKSPACE || key == KEY_DC)
     {
@@ -228,10 +229,13 @@ void GameWindow::GameLoop()
         {
             break;
         }
+        
+        Render();
         if (!editMode)
         {
             if (board.AllFilled())
             {
+                Render();
                 if (board.CheckSolution())
                 {
                     wprintw(info, "Won!\n");
@@ -242,7 +246,6 @@ void GameWindow::GameLoop()
                 }
             }
         }
-        Render();
     }
     Delete();
 }

@@ -11,6 +11,7 @@ void init_curses()
     cbreak();
     keypad(stdscr, true);
     curs_set(0);
+    mousemask(ALL_MOUSE_EVENTS);
 }
 
 
