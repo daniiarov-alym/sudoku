@@ -38,6 +38,7 @@ private:
     {
         delwin(grid);
         delwin(info);
+        delwin(log);
     }
     void Normalize(int& x, int& y, int mod = Board::SIZE);
     void Move(int dy, int dx);
