@@ -79,6 +79,7 @@ void GameWindow::PrintInfo()
     wprintw(info, "I - ented editor mode\n");
     wprintw(info, "F - leave editor mode\n");
     wprintw(info, "Del, BackSpace, Space, 0 - delete number under cursor\n");
+    wprintw(info, "C - clear the board\n");
 }
 
 void GameWindow::Normalize(int &x, int &y, int mod)
