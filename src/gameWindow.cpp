@@ -31,7 +31,7 @@ void GameWindow::Render()
         for (int j = 0; j < Board::SIZE; j++)
         {
             if (deck.at(i).at(j) == 0)
-            {   
+            {
                 mvwaddch(grid, 2 * i + 1, 2 + 4 * j, ' ');
                 continue;
             }
@@ -68,8 +68,6 @@ void GameWindow::Normalize(int &x, int &y, int mod)
         y = y % mod;
     }
 }
-
-
 
 void GameWindow::Move(int dy, int dx)
 {
@@ -113,18 +111,18 @@ void GameWindow::Tab()
         if (cursorX >= Board::SIZE)
         {
             cursorX = 0;
-            cursorY = (cursorY+1)%Board::SIZE;
+            cursorY = (cursorY + 1) % Board::SIZE;
         }
         return;
     }
     int ny = cursorY;
-    int nx = cursorX+1;
+    int nx = cursorX + 1;
     for (;;)
     {
         if (nx >= Board::SIZE)
         {
             nx = 0;
-            ny = (ny+1)%Board::SIZE;
+            ny = (ny + 1) % Board::SIZE;
         }
         if (ny == cursorY && nx == cursorX)
         {
@@ -140,7 +138,6 @@ void GameWindow::Tab()
             cursorX = nx;
             return;
         }
-         
     }
 }
 
@@ -198,6 +195,10 @@ bool GameWindow::Controle(int key)
     {
         board.Set(cursorY, cursorX, 0, editMode);
     }
+    else if (key == 'S' || key == 's')
+    {
+        board.Solve(0,0);
+    }
     return true;
 }
 
@@ -209,6 +210,17 @@ void GameWindow::GameLoop()
         if (!Controle(key))
         {
             break;
+        }
+        if (!editMode)
+        {
+            if (board.AllFilled())
+            {
+                if (board.CheckSolution())
+                {
+                    wprintw(info, "Won!\n");
+                    wrefresh(info);
+                }
+            }
         }
         Render();
     }

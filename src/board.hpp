@@ -13,10 +13,14 @@ private:
     static const int HARD = 72;
     std::vector<std::vector<int>> board;
     std::vector<std::vector<int>> userBoard;
+    
     void FindMinimal(int &y, int &x);
     std::vector<int> FindCandidates(int y, int x);
     void Hide(int difficulty);
-    bool AllFilled();
+    
+    bool CheckRows();
+    bool CheckColumns();
+    bool CheckSquares();
 public:
     Board();
     std::vector<std::vector<int>> GetBoard()
@@ -27,7 +31,8 @@ public:
     {
         return userBoard;
     }
-    
+    bool AllFilled();
+    bool CheckSolution();
     void Generate(int difficulty);
     
     void Set(int y, int x, int val, bool editMode);

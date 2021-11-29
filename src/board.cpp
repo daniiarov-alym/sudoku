@@ -15,6 +15,71 @@ void Board::Set(int y, int x, int val, bool editMode)
         board.at(y).at(x) = val;
     if (board.at(y).at(x) == 0)
         userBoard.at(y).at(x) = val;
+
+}
+
+bool Board::CheckRows()
+{
+    for (int i = 0; i < 9; i++)
+    {
+        bool visited[9] = {false, false, false, false, false, false, false, false, false};
+        for (int j = 0; j < 9; j++)
+        {
+            if (visited[board[i][j] - 1])
+            {
+                return false;
+            }
+            else
+            {
+                visited[board[i][j] - 1] = true;
+            }
+        }
+    }
+    return true;
+}
+
+bool Board::CheckColumns()
+{
+    for (int j = 0; j < 9; j++)
+    {
+        bool visited[9] = {false, false, false, false, false, false, false, false, false};
+        for (int i = 0; i < 9; i++)
+        {
+            if (visited[board[i][j] - 1])
+            {
+                return false;
+            }
+            else
+            {
+                visited[board[i][j] - 1] = true;
+            }
+        }
+    }
+    return true;
+}
+
+bool Board::CheckSquares()
+{
+    for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                bool visited[9] = {false, false,false,false, false,false,false, false,false};
+                for (int k = i*3; k < (i+1)*3; k++) {
+                    for (int l = j*3; l < (j+1)*3; l++) {
+                        if (visited[board[k][l]-1]) {
+                            return false;
+                        } else {
+                            visited[board[k][l]-1] = true;
+                        }
+                    }
+                }
+            }
+        }
+    return true;
+}
+
+bool Board::CheckSolution()
+{
+    return CheckColumns() && CheckRows() && CheckSquares();
 }
 
 /*
@@ -73,7 +138,12 @@ std::vector<int> Board::FindCandidates(int y, int x)
     return res;
 }
 
-
+bool Board::AllFilled()
+{
+    int x, y;
+    FindMinimal(x, y);
+    return x == -1 && y == -1;
+}
 
 //if x, y both equal to -1 then it means that all is filled
 void Board::FindMinimal(int &x, int &y)
@@ -84,7 +154,7 @@ void Board::FindMinimal(int &x, int &y)
     {
         for (int j = 0; j < SIZE; j++)
         {
-            if (board.at(i).at(x) == 0)
+            if (board.at(i).at(j) == 0)
             {
                 y = i;
                 x = j;
@@ -163,8 +233,7 @@ bool Board::Solve(int y, int x)
 
 void Board::Hide(int difficulty)
 {
-    int amount = difficulty/SIZE;
-    
+    int amount = difficulty / SIZE;
     for (int i = 0; i < SIZE; i++)
     {
         std::vector<int> shuffle;
@@ -172,7 +241,7 @@ void Board::Hide(int difficulty)
         {
             shuffle.push_back(j);
         }
-        time_t t = time(nullptr)+rand()%100+i;
+        time_t t = time(nullptr) + rand() % 100 + i;
         srand(t);
         std::random_shuffle(shuffle.begin(), shuffle.end());
         for (int j = 0; j < amount; j++)
@@ -181,8 +250,6 @@ void Board::Hide(int difficulty)
         }
     }
 }
-
-
 
 void Board::Generate(int difficulty)
 {
@@ -195,7 +262,8 @@ void Board::Generate(int difficulty)
     {
         Hide(MEDIUM);
     }
-    else {
+    else
+    {
         Hide(HARD);
     }
     userBoard = board;
