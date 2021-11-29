@@ -9,8 +9,8 @@ public:
     
 private:
     static const int EASY = 27;
-    static const int MEDIUM = 45;
-    static const int HARD = 72;
+    static const int MEDIUM = 36;
+    static const int HARD = 45;
     std::vector<std::vector<int>> board;
     std::vector<std::vector<int>> userBoard;
     
@@ -31,6 +31,8 @@ public:
     {
         return userBoard;
     }
+    
+    void Reset();
     bool AllFilled();
     bool CheckSolution();
     void Generate(int difficulty);

@@ -10,6 +10,7 @@ void init_curses()
     setlocale(LC_ALL, "");
     cbreak();
     keypad(stdscr, true);
+    curs_set(0);
 }
 
 

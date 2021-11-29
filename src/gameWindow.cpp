@@ -170,22 +170,27 @@ bool GameWindow::Controle(int key)
     else if (key == KEY_LEFT)
     {
         Move(0, -1);
+        curs_set(1);
     }
     else if (key == KEY_RIGHT)
     {
         Move(0, 1);
+        curs_set(1);
     }
     else if (key == KEY_UP)
     {
         Move(-1, 0);
+        curs_set(1);
     }
     else if (key == KEY_DOWN)
     {
         Move(1, 0);
+        curs_set(1);
     }
     else if (key == '\t')
     {
         Tab();
+        curs_set(1);
     }
     else if (isdigit(key))
     {
@@ -219,6 +224,9 @@ void GameWindow::GameLoop()
                 {
                     wprintw(info, "Won!\n");
                     wrefresh(info);
+                    curs_set(0);
+                    getch();
+                    board.Reset();
                 }
             }
         }

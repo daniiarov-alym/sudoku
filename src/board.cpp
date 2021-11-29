@@ -13,9 +13,8 @@ void Board::Set(int y, int x, int val, bool editMode)
         return;
     if (editMode)
         board.at(y).at(x) = val;
-    if (board.at(y).at(x) == 0)
-        userBoard.at(y).at(x) = val;
 
+    userBoard.at(y).at(x) = val;
 }
 
 bool Board::CheckRows()
@@ -60,20 +59,27 @@ bool Board::CheckColumns()
 
 bool Board::CheckSquares()
 {
-    for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                bool visited[9] = {false, false,false,false, false,false,false, false,false};
-                for (int k = i*3; k < (i+1)*3; k++) {
-                    for (int l = j*3; l < (j+1)*3; l++) {
-                        if (visited[board[k][l]-1]) {
-                            return false;
-                        } else {
-                            visited[board[k][l]-1] = true;
-                        }
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            bool visited[9] = {false, false, false, false, false, false, false, false, false};
+            for (int k = i * 3; k < (i + 1) * 3; k++)
+            {
+                for (int l = j * 3; l < (j + 1) * 3; l++)
+                {
+                    if (visited[board[k][l] - 1])
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        visited[board[k][l] - 1] = true;
                     }
                 }
             }
         }
+    }
     return true;
 }
 
@@ -267,4 +273,11 @@ void Board::Generate(int difficulty)
         Hide(HARD);
     }
     userBoard = board;
+}
+
+void Board::Reset()
+{
+    std::vector<std::vector<int>> tmp(SIZE, std::vector<int>(SIZE,0));
+    board = tmp;
+    userBoard = tmp;
 }
