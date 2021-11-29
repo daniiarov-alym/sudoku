@@ -234,6 +234,7 @@ bool GameWindow::Controle(int key)
     else if (key == 'i' || key == 'I')
     {
         editMode = true;
+        board.Sync();
         Render();
     }
     else if (key == 'f' || key == 'F')
@@ -241,6 +242,7 @@ bool GameWindow::Controle(int key)
         editMode = false;
         if (!board.Solvable())
         {
+            wclear(log);
             wprintw(log, "This problem does not have solution\n");
             wrefresh(log);
             curs_set(0);
@@ -311,6 +313,7 @@ void GameWindow::GameLoop()
                 Render();
                 if (board.CheckSolution())
                 {
+                    wclear(log);
                     wprintw(log, "You won the game, congratulations! Press any key to continue\n");
                     wrefresh(log);
                     curs_set(0);

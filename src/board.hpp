@@ -31,6 +31,7 @@ public:
     {
         return userBoard;
     }
+    void Sync(){board=userBoard;}
     
     bool Solvable();
     
