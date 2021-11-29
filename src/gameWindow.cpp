@@ -147,9 +147,39 @@ void GameWindow::Tab()
     }
 }
 
+void GameWindow::FindCoordinate()
+{
+    int tmpY = event.y-GRID_Y;
+    int tmpX = event.x-GRID_X;
+    if (tmpY < 0 || tmpY > GRID_LINES-1 || tmpX < 0 || tmpX > GRID_COLUMNS-1)
+    {
+        curs_set(0);
+        return;
+    }
+    tmpY /= 2;
+    tmpX /= 4;
+    if (tmpY == Board::SIZE)
+        tmpY--;
+    if (tmpX == Board::SIZE)
+        tmpX--;
+    cursorY = tmpY;
+    cursorX = tmpX;        
+}
+
 bool GameWindow::Controle(int key)
 {
-    if (key == 27)
+    if (key == KEY_MOUSE)
+    {
+        if (getmouse(&event) == OK)
+        {
+            if (event.bstate & BUTTON1_CLICKED || event.bstate & BUTTON1_PRESSED)
+            {
+                curs_set(1);
+                FindCoordinate();
+            }
+        }
+    }
+    else if (key == 27)
     {
         return false;
     }

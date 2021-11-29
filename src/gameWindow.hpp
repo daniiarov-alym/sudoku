@@ -21,7 +21,10 @@ private:
     int cursorX;
     Board board;
     bool editMode;
+    MEVENT event;
     
+    
+    void FindCoordinate();
     void DrawGrid();
     //returns false on exit
     bool Controle(int key);
